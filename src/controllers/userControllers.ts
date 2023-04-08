@@ -43,3 +43,5 @@ const createUser = async (req: Request, res: Response) => {
         res.status(400).json({error: err});
     }
 }
+
+export { createUser }
