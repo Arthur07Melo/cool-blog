@@ -15,7 +15,9 @@ model User {
   username String
   email    String @unique
   password String
-  Post     Post[]
+
+  Post         Post[]
+  LikePostUser LikePostUser[]
 
   @@map("users")
 }
@@ -26,8 +28,19 @@ model Post {
   description String
   created_at  DateTime @default(now())
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  user         User           @relation(fields: [userId], references: [id])
+  userId       String
+  LikePostUser LikePostUser[]
 
   @@map("posts")
+}
+
+model LikePostUser {
+  user   User   @relation(fields: [userId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+  userId String
+  postId Int
+
+  @@unique([userId, postId])
+  @@map("LikePostUser")
 }
