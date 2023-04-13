@@ -1,8 +1,10 @@
 import express from "express";
-import { getAllPosts } from "../controllers/postsControllers"
+import { getAllPosts, likePost } from "../controllers/postsControllers"
 
 const router = express.Router();
 
+
+router.get("/:postID", likePost);
 router.get("/", getAllPosts);
 
 
