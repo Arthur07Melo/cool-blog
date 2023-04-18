@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const getAllPosts = async (req: Request, res: Response) => {
     const posts = await prisma.post.findMany({
         where: {
-            userId: req.user.id 
+            userId: req.user.id
         }
     })
 }
@@ -35,6 +35,38 @@ const addPost = async (req: Request, res: Response) => {
 
     res.status(201);
     res.json(newPost);
+}
+
+
+const deletePost = async (req: Request, res: Response) => {
+    const reqParamsPattern = z.object({
+        postID: z.number()
+    });
+
+    const { postID } = reqParamsPattern.parse(req.params);
+    
+    const post = await prisma.post.findUnique({
+        where: {
+            id: postID
+        }
+    });  
+
+    if(!post){
+        return res.status(400).json({ message: `post with id ${postID} does not exist`});
+    }
+
+    if(post.userId != req.user.id) {
+        return res.status(401).json({ message: "User does not have authorization to delete this post."});
+    }
+
+    await prisma.post.delete({
+        where: {
+            id: postID
+        }
+    });
+    
+    res.status(200);
+    res.json({ message: `Post ${postID} deleted with sucess.`});
 }
 
 
@@ -80,7 +112,7 @@ const likePost = async (req: Request, res: Response) => {
         }
     })
 
-    res.status(201).json({ message: "likePostUser created" });
+    res.status(201).json({ message: `Post ${postID} liked by user ${req.user.id}.` });
 }
 
-export { getAllPosts, addPost, likePost }
+export { getAllPosts, addPost, likePost, deletePost }
