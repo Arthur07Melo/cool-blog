@@ -10,6 +10,9 @@ const getAllPosts = async (req: Request, res: Response) => {
             userId: req.user.id
         }
     })
+
+    res.status(200);
+    res.json(posts);
 }
 
 
